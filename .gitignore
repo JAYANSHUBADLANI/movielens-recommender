@@ -1,0 +1,17 @@
+# Data (downloaded/generated, not committed)
+data/raw/
+data/processed/
+
+# Python
+__pycache__/
+*.pyc
+*.egg-info/
+.ipynb_checkpoints/
+.pytest_cache/
+
+# Virtual environments
+.venv/
+venv/
+
+# macOS
+.DS_Store

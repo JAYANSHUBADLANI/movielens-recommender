@@ -1,0 +1,4 @@
+model,recall_at_10,ndcg_at_10,map_at_10,coverage_at_10,mean_pop_rank
+popularity,0.0452,0.0362,0.0161,0.0331,10.7
+item-knn,0.0611,0.0511,0.0242,0.0903,34.3
+als,0.0771,0.0625,0.0289,0.3153,182.6
