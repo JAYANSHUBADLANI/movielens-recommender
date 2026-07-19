@@ -26,35 +26,41 @@ Recommendation surfaces carry a large share of engagement wherever catalogs outg
 
 Every user gets a factor vector $x_u \in \mathbb{R}^f$, every item $y_i \in \mathbb{R}^f$. Observed positives get preference $p_{ui}=1$, everything else $p_{ui}=0$, and each term is weighted by a confidence
 
-$$
-c_{ui} = 1 + \alpha\, r_{ui}
-$$
+```math
+c_{ui} = 1 + \alpha r_{ui}
+```
 
 where $r_{ui}$ is the raw rating of the positive interaction (a 5-star event carries more confidence than a 4-star one) and $r_{ui}=0$ when unobserved, so unobserved pairs participate at low confidence $c_{ui}=1$. The objective, summed over all $U \times I$ pairs:
 
-$$
-L = \sum_{u,i} c_{ui}\,\big(p_{ui} - x_u^\top y_i\big)^2 + \lambda\Big(\sum_u \|x_u\|^2 + \sum_i \|y_i\|^2\Big)
-$$
+```math
+L = \sum_{u,i} c_{ui} \big(p_{ui} - x_u^\top y_i\big)^2 + \lambda \left(\sum_u \Vert x_u \Vert^2 + \sum_i \Vert y_i \Vert^2\right)
+```
 
 **Closed-form update.** Fix the item factors $Y \in \mathbb{R}^{I \times f}$ and solve for one user. With $C^u = \mathrm{diag}(c_{u1},\dots,c_{uI})$ and $p_u$ the user's preference vector:
 
-$$
-\frac{\partial L}{\partial x_u} = -2\, Y^\top C^u \big(p_u - Y x_u\big) + 2\lambda x_u = 0
-\;\;\Longrightarrow\;\;
-\boxed{\,x_u = \big(Y^\top C^u Y + \lambda I\big)^{-1} Y^\top C^u\, p_u\,}
-$$
+```math
+\frac{\partial L}{\partial x_u} = -2 Y^\top C^u \big(p_u - Y x_u\big) + 2\lambda x_u = 0
+```
+
+```math
+x_u = \big(Y^\top C^u Y + \lambda I\big)^{-1} Y^\top C^u p_u
+```
 
 and symmetrically $y_i = (X^\top C^i X + \lambda I)^{-1} X^\top C^i p_i$ for items.
 
 **The efficiency trick.** Computing $Y^\top C^u Y$ naively costs $O(I f^2)$ per user, hopeless. But $C^u = I + (C^u - I)$, and $(C^u - I)$ is non-zero only on the $n_u$ items the user actually touched, so
 
-$$
-Y^\top C^u Y = \underbrace{Y^\top Y}_{\text{shared by all users}} + \underbrace{Y^\top (C^u - I)\, Y}_{\text{only } n_u \text{ rows}}
-\qquad
-Y^\top C^u p_u = \sum_{i \in \mathcal{I}_u} (1 + \alpha r_{ui})\, y_i
-$$
+```math
+Y^\top C^u Y = Y^\top Y + Y^\top (C^u - I) Y
+```
 
-$Y^\top Y$ is computed once per sweep; each user then costs $O(n_u f^2 + f^3)$, giving $O(f^2 N + f^3 U)$ per sweep for $N$ total interactions. Each $f{\times}f$ system is symmetric positive definite (for $\lambda > 0$), so `src/models/als.py` solves it with a Cholesky factorisation. That is the whole algorithm.
+where $Y^\top Y$ is shared by all users and only needs computing once per sweep, and the second term only involves the $n_u$ rows the user actually touched. Similarly
+
+```math
+Y^\top C^u p_u = \sum_{i \in \mathcal{I}_u} (1 + \alpha r_{ui}) y_i
+```
+
+Each user then costs $O(n_u f^2 + f^3)$, giving $O(f^2 N + f^3 U)$ per sweep for $N$ total interactions. Each $f \times f$ system is symmetric positive definite (for $\lambda > 0$), so `src/models/als.py` solves it with a Cholesky factorisation. That is the whole algorithm.
 
 ## Results
 
