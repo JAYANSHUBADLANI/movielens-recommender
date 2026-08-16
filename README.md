@@ -1,5 +1,7 @@
 # MovieLens Recommender: Matrix Factorization from Scratch
 
+[![tests](https://github.com/JAYANSHUBADLANI/movielens-recommender/actions/workflows/tests.yml/badge.svg)](https://github.com/JAYANSHUBADLANI/movielens-recommender/actions/workflows/tests.yml)
+
 Top-N movie recommendation on [MovieLens 1M](https://grouplens.org/datasets/movielens/1m/), built to show the math, not the library calls: implicit-feedback ALS (Hu, Koren & Volinsky, 2008) implemented from scratch in NumPy, benchmarked against a popularity baseline and item-item collaborative filtering, with a leakage-safe temporal split, bootstrap significance testing, and a Streamlit demo with per-recommendation explanations.
 
 Stack: `pandas`, `numpy`, `scipy` (sparse containers + Cholesky solves only, no `implicit`, `lightfm` or `surprise`), `matplotlib`, `streamlit`.
